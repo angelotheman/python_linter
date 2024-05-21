@@ -1,9 +1,9 @@
-name: Lint Python Code
+name: CI Pipeline
 
 on: [push, pull_request]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,10 +15,47 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install Pycodestyle
+    - name: Install dependencies
       run: |
-        pip install pycodestyle
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        pytest
 
     - name: Lint Python files with Pycodestyle
       run: |
+        pip install pycodestyle
         pycodestyle .
+
+    - name: Send Email Notification
+      if: failure()
+      run: |
+        python - <<EOF
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
+        sender_email = "${{ secrets.OUTLOOK_EMAIL }}"
+        receiver_email = "${{ secrets.OUTLOOK_EMAIL }}"
+        password = "${{ secrets.OUTLOOK_PASSWORD }}"
+
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "CI Pipeline Failed"
+        message["From"] = sender_email
+        message["To"] = receiver_email
+
+        text = """\
+        Hi,
+        The CI pipeline has failed. Please check the details.
+        """
+        part = MIMEText(text, "plain")
+        message.attach(part)
+
+        with smtplib.SMTP("smtp.office365.com", 587) as server:
+            server.starttls()
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+        EOF
+
