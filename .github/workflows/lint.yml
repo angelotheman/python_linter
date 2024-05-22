@@ -42,14 +42,14 @@ jobs:
         data = {
             'api_key': '${{ secrets.SMS_API_KEY }}',
             'sender_id': 'GitHub',
-            'message': 'CI Pipeline has failed, check the details'
+            'message': 'CI Pipeline has failed, check the details',
             'recipient': '${{ secrets.SMS_RECIPIENT }}'
         }
 
-      headers = {'Content-type': 'application/json'}
+        headers = {'Content-type': 'application/json'}
 
-      response = requests.post(quicksend_url, headers=headers, json=data)
+        response = requests.post(quicksend_url, headers=headers, json=data)
 
-      with open('sms_response.json', 'w') as f:
-          json.dump(response.json(), f, indent=4)
-      EOF
+        with open('sms_response.json', 'w') as f:
+            json.dump(response.json(), f, indent=4)
+        EOF
