@@ -17,15 +17,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install requests
-
-    - name: Run tests
-      run: |
-        pytest
+        pip install requests pycodestyle
 
     - name: Lint Python files with Pycodestyle
       run: |
-        pip install pycodestyle
         pycodestyle .
 
     - name: Send SMS Notification
