@@ -48,7 +48,7 @@ jobs:
 
       headers = {'Content-type': 'application/json'}
 
-      response = requests.post(quicksend_url, headers=headers, json=data}
+      response = requests.post(quicksend_url, headers=headers, json=data)
 
       with open('sms_response.json', 'w') as f:
           json.dump(response.json(), f, indent=4)
